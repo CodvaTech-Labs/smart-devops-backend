@@ -1,0 +1,29 @@
+name: Python Web App CI/CD
+
+on:
+  push:
+    branches:
+      - main  # You can specify your main branch here
+
+jobs:
+  ecs-ci-cd:
+    runs-on: ubuntu-latest  # You can choose a different runner if needed
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-south-1 # Replace with your desired AWS region
+
+
+    - name: Create Docker Build and Upload to ECR 
+      run: | 
+        aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/s3c4l2m0
+        docker build -t smart-devops-backend .
+        docker tag smart-devops-backend:latest public.ecr.aws/s3c4l2m0/smart-devops-backend:latest
+        docker push public.ecr.aws/s3c4l2m0/smart-devops-backend:latest
