@@ -1,4 +1,4 @@
-name: Python Web App CI/CD
+name: DevOps Backend App CI/CD 
 
 on:
   push:
